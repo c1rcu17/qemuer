@@ -99,11 +99,14 @@ func runCmd(ctx *cli.Context) error {
 		"-k", "pt",
 	)
 
-	if len(ec.ISO) > 0 {
-		qemuArgs = append(qemuArgs,
-			"-drive", fmt.Sprintf("id=drive0,if=none,format=raw,file=%s", ec.ISO),
-			"-device", fmt.Sprintf("ide-cd,drive=drive0,bus=ide.1,bootindex=%d", bootIndex))
-		bootIndex++
+	if len(ec.ISOs) > 0 {
+		for i, f := range ec.ISOs {
+			qemuArgs = append(qemuArgs,
+				"-drive", fmt.Sprintf("id=drive%d,if=none,format=raw,file=%s", i, f),
+				"-device", fmt.Sprintf("ide-cd,drive=drive%d,bus=ide.%d,bootindex=%d", i, i+1, bootIndex))
+			bootIndex++
+		}
+
 		bootOrder = bootOrder + "c"
 	}
 

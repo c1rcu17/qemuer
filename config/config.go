@@ -22,7 +22,7 @@ type (
 		Bios     Bios
 		CPU      CPU
 		Memory   int
-		ISO      string
+		ISOs     []string
 		Disks    []string
 		Networks []Network
 		Video    Video
@@ -150,12 +150,13 @@ func NewEnrichedConfig(c *Config, file string) (*EnrichedConfig, error) {
 		return nil, fmt.Errorf("memory must be greater than 64")
 	}
 
-	if len(ec.ISO) > 0 {
-		if !filepath.IsAbs(ec.ISO) {
-			ec.ISO = path.Join(ec.Home, ec.ISO)
+	for i, f := range ec.ISOs {
+		if !filepath.IsAbs(f) {
+			f = path.Join(ec.Home, f)
+			ec.ISOs[i] = f
 		}
 
-		if _, err := os.Stat(ec.ISO); err != nil {
+		if _, err := os.Stat(f); err != nil {
 			return nil, err
 		}
 	}
